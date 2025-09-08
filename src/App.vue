@@ -25,14 +25,14 @@ async function add_torrents(event: Event): Promise<boolean> {
   }
 
   for (const file of files)
-    torrent_list.value.push(new Torrent(await file.arrayBuffer()))
+    torrent_list.value.push(new Torrent(await file.arrayBuffer(), file.name))
 
+  current_torrent_list_index.value = torrent_list.value.length - 1
 
   return true
 }
 
-function save_torrent() {
-  const torrent = torrent_list.value[current_torrent_list_index.value]
+function save_torrent(torrent: Torrent | undefined) {
   if (torrent === undefined) {
     console.error('current torrent obj is null',
       torrent_list.value[current_torrent_list_index.value])
@@ -46,12 +46,24 @@ function save_torrent() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = "download.torrent";
+  a.download = torrent.filename || "download.torrent";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
 
+function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent | undefined {
+  if (torrent === undefined) {
+    console.error('The input file is undefined')
+    return undefined
+  }
+
+  const v1_torrent = new Torrent(torrent.encode(), `${torrent.filename}-fake_as_v1`)
+
+  // TODO
+
+  return v1_torrent
 }
 
 </script>
@@ -59,31 +71,34 @@ function save_torrent() {
 <template>
   <!-- 按钮栏 -->
   <div class="flex-line">
-    <input type="file" @change="add_torrents" accept=".torrent" />
+    <input type="file" multiple @change="add_torrents" accept=".torrent" />
 
-    <button @click="console.info(torrent_list)">print torrent_list</button>
-    <button @click="torrent_list.length = 0, current_torrent_list_index = 0">clear torrent_list</button>
+    <button @click="console.info(torrent_list)">Print list</button>
+    <button @click="torrent_list.length = 0, current_torrent_list_index = 0">Clear list</button>
 
-    <button @click="save_torrent" v-show="torrent_list.length > 0">save torrent</button>
+    <button @click="save_torrent(torrent_list[current_torrent_list_index])" v-show="torrent_list.length > 0">Save
+      torrent</button>
+    <!-- <button @click="save_torrent(fake_hybrid_as_v1(torrent_list[current_torrent_list_index]))"
+      v-show="torrent_list.length > 0">Fake&Save hybrid → v1</button> -->
   </div>
 
   <br>
 
   <!-- 内容展示 -->
-  <div style="border: 1px solid lightgray;padding: 1rem;display: grid;gap: 1rem;">
+  <div style="border: 1px solid lightgray;padding: 1rem;display: grid;gap: 0.2rem;">
     <!-- 页标 -->
     <div class="flex-line">
-      <button v-for="torrent, i in torrent_list" @click="current_torrent_list_index = i">
-        {{ i + 1 }}
+      <button v-for="torrent, i in torrent_list" @click="current_torrent_list_index = i"
+        :class="i === current_torrent_list_index ? 'selected' : ''">
+        {{ i + 1 }}. {{ torrent.filename }}
       </button>
     </div>
 
+    <p>{{ torrent_list[current_torrent_list_index]?.filename }}</p>
+
     <!-- 内容 -->
     <div class="content-box">
-
-      <!-- <RecursiveComponent :data="torrent_list[current_torrent_list_index]?.data" :layer="0" /> -->
       <RecursiveComponent v-if="torrent_list.length > 0" :path="[current_torrent_list_index, 'data']" />
-
     </div>
   </div>
 </template>

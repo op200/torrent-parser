@@ -133,8 +133,7 @@ const displayKey = (key: string | number) => {
 
 .content-input:focus {
     outline: none;
-    border-color: #409eff;
-    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+    background-color: #e8e8e8;
 }
 
 .nested-header {
@@ -146,6 +145,7 @@ const displayKey = (key: string | number) => {
 
 .nested-header:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
 }
 
 .toggle-icon {

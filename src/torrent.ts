@@ -25,7 +25,7 @@ function convertUint8Arrays<T>(obj: T): Converted<T> {
         const result: Record<string, any> = {}
         for (const key in obj) {
             if (Object.prototype.hasOwnProperty.call(obj, key))
-                if (key === 'pieces')
+                if (new Set(['pieces', 'pieces root']).has(key) || key.length == 64)
                     result[key] = obj[key]
                 else
                     result[key] = convertUint8Arrays(obj[key])
@@ -39,9 +39,10 @@ function convertUint8Arrays<T>(obj: T): Converted<T> {
 
 
 export default class Torrent {
+    filename: string
     data
 
-    constructor(buffer: ArrayBuffer | Buffer) {
+    constructor(buffer: ArrayBuffer | Buffer, filename = "") {
         if (buffer instanceof ArrayBuffer)
             this.data = convertUint8Arrays(
                 bencode.decode(Buffer.from(buffer))
@@ -50,6 +51,8 @@ export default class Torrent {
             this.data = convertUint8Arrays(
                 bencode.decode(buffer)
             )
+
+        this.filename = filename
     }
 
     encode() {
