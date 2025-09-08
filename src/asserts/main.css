@@ -1,18 +1,16 @@
-/* src/assets/css/global.css 或直接在 main.ts 引入的样式文件中 */
 button {
     /* 基础样式 */
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.3rem 0.8rem 0.4rem;
-    border-radius: 8px;
+    border-radius: 5px;
     border: none;
-    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     user-select: none;
     position: relative;
     overflow: hidden;
@@ -32,7 +30,6 @@ button:hover {
     background-color: #4338ca;
     /* 主色深10% */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
 }
 
 button:focus-visible {
@@ -89,4 +86,98 @@ button.selected {
 /* 选中状态下的悬停 */
 button.selected:hover {
     background-color: #312e81;
+}
+
+/* ==================== */
+/* 现代化 <a> 标签样式 */
+/* ==================== */
+a {
+    /* 基础样式 */
+    display: inline-flex;
+    align-items: center;
+    color: #4f46e5;
+    /* 与按钮主色一致 */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    gap: 0.3rem;
+    padding: 0.2rem 0;
+}
+
+/* 链接悬停效果 */
+a:hover {
+    color: #4338ca;
+    /* 主色深10% */
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+/* 焦点状态（键盘导航） */
+a:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+    border-radius: 4px;
+}
+
+/* 活动状态（鼠标按下时） */
+a:active {
+    color: #3730a3;
+    /* 主色深20% */
+    transform: translateY(1px);
+}
+
+/* 禁用状态（通过类名控制） */
+a.disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 图标链接（配合FontAwesome等图标库） */
+a .icon {
+    width: 1em;
+    height: 1em;
+    transition: transform 0.2s;
+}
+
+a:hover .icon {
+    transform: translateX(2px);
+}
+
+/* 下划线动画效果 */
+a.underline-animated {
+    position: relative;
+    text-decoration: none;
+}
+
+a.underline-animated::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4f46e5;
+    transition: width 0.3s ease;
+}
+
+a.underline-animated:hover::after {
+    width: 100%;
+}
+
+/* 按钮式链接 */
+a.button-style {
+    background-color: #4f46e5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+a.button-style:hover {
+    background-color: #4338ca;
+    text-decoration: none;
 }

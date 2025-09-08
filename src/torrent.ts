@@ -58,4 +58,10 @@ export default class Torrent {
     encode() {
         return bencode.encode(this.data)
     }
+
+    generate_magnet(): string {
+        const magnet_str_list = Array<string>()
+        // TODO
+        return magnet_str_list.join('&')
+    }
 }

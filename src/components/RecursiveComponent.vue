@@ -127,8 +127,6 @@ const displayKey = (key: string | number) => {
     padding: 4px 8px;
     border: 1px solid #ddd;
     border-radius: 3px;
-    font-family: inherit;
-    font-size: inherit;
 }
 
 .content-input:focus {
