@@ -73,19 +73,8 @@ button:active::after {
 
 /* 选中状态 */
 button.selected {
-    background-color: #3730a3;
-    /* 比 hover 更深 */
-    box-shadow:
-        0 0 0 2px white,
-        /* 内边框 */
-        0 0 0 4px #4f46e5;
-    /* 外边框 */
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #4f46e5;
     transform: translateY(0);
-}
-
-/* 选中状态下的悬停 */
-button.selected:hover {
-    background-color: #312e81;
 }
 
 /* ==================== */

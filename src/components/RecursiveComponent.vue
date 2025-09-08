@@ -73,7 +73,10 @@ const displayKey = (key: string | number) => {
                 <template v-if="!isNested(value)">
                     <div class="content-simple">
                         <span class="content-key">{{ displayKey(key) }}:</span>
-                        <input type="text" class="content-input" :value="value"
+
+                        <textarea v-if="new Set(['comment']).has(key)" :value="value" class="content-input"
+                            @input="currentValue[key] = ($event.target as HTMLInputElement).value"></textarea>
+                        <input v-else type="text" class="content-input" :value="value"
                             @input="currentValue[key] = ($event.target as HTMLInputElement).value" />
                     </div>
                 </template>
@@ -95,13 +98,21 @@ const displayKey = (key: string | number) => {
 
         <!-- 处理非嵌套值（直接显示输入框） -->
         <div v-else class="content-simple">
-            <input type="text" class="content-input" :value="currentValue"
-                @input="currentValue = ($event.target as HTMLInputElement).value" />
+            <textarea type="text" class="content-input" :value="currentValue"
+                @input="currentValue = ($event.target as HTMLInputElement).value"></textarea>
         </div>
     </div>
 </template>
 
 <style scoped>
+textarea {
+    resize: vertical;
+    min-height: 4rem;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    scrollbar-width: thin;
+}
+
 .content-block {
     padding: 0.4rem;
     border-radius: 4px;
@@ -127,6 +138,8 @@ const displayKey = (key: string | number) => {
     padding: 4px 8px;
     border: 1px solid #ddd;
     border-radius: 3px;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 .content-input:focus {

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import RecursiveComponent from "@/components/RecursiveComponent.vue"
 
-import Torrent from "@/torrent"
+import { Torrent, Torrent_format } from "@/torrent"
 
 import { ref } from "vue"
 import { storeToRefs } from 'pinia'
+import { Buffer } from 'buffer'
 
 import { useMainStore } from '@/stores/mainStore'
 import { copy_to_clipboard } from '@/utils'
+import { error } from "console"
 
 const is_show_about = ref<boolean>(false)
 const home_link = "https://github.com/op200/torrent-parser"
@@ -64,17 +66,28 @@ function save_torrent(torrent: Torrent | undefined) {
   URL.revokeObjectURL(url);
 }
 
-function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent | undefined {
-  if (torrent === undefined) {
-    console.error('The input file is undefined')
-    return undefined
-  }
+function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent {
+  if (torrent === undefined)
+    throw new Error('The input file is undefined')
 
-  const v1_torrent = new Torrent(torrent.encode(), `${torrent.filename}-fake_as_v1`)
+  const v1_torrent = new Torrent(torrent.encode(), `fake_as_v1-${torrent.filename}`)
 
-  // TODO
+  delete v1_torrent.data["piece layers"]
+  delete v1_torrent.data.info["meta version"]
+  delete v1_torrent.data.info["file tree"]
 
   return v1_torrent
+}
+
+function remove_piece_layers(torrent: Torrent | undefined): Torrent {
+  if (torrent === undefined)
+    throw new Error('The input file is undefined')
+
+  const new_torrent = new Torrent(torrent.encode(), `remove_piece_layers-${torrent.filename}`)
+
+  delete new_torrent.data["piece layers"]
+
+  return new_torrent
 }
 
 </script>
@@ -91,8 +104,7 @@ function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent | undefined {
 
       <button @click="copy_to_clipboard(torrent_list
         .map(torrent => torrent.generate_magnet())
-        .join('\n'))" disabled>Copy all
-        magnet</button>
+        .join('\n'))" :disabled="torrent_list.length < 1">Copy all magnet</button>
 
       <button @click="is_show_about = !is_show_about">About</button>
     </div>
@@ -101,10 +113,12 @@ function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent | undefined {
     <div v-show="is_show_about">
       <h2>About</h2>
       <a :href="home_link" target="_blank">{{ home_link }}</a>
+      <p>Why need the 'Remove piece layers': The 'bencode' has a bug in decoding piece layers, if the 'piece layers' are
+        not removed, the output torrent file format is illegal</p>
     </div>
 
     <!-- 内容展示 -->
-    <div style="border: 1px solid lightgray;padding: 1rem;display: grid;gap: 1rem;">
+    <div style="border: 1px solid lightgray;padding: 1rem;display: grid;gap: 1rem;" v-show="torrent_list.length > 0">
       <!-- 页标 -->
       <div class="flex-line">
         <button v-for="torrent, i in torrent_list" @click="current_torrent_list_index = i"
@@ -113,16 +127,39 @@ function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent | undefined {
         </button>
       </div>
 
-      <!-- name -->
-      <p style="margin: 0;">{{ torrent_list[current_torrent_list_index]?.filename }}</p>
+      <!-- 解析信息 -->
+      <div style="display: grid;gap: 0.5rem;">
+        <div>{{ torrent_list[current_torrent_list_index]?.filename }}</div>
+
+        <div>{{ torrent_list[current_torrent_list_index]?.get_format().toString() }}</div>
+
+        <div v-show="torrent_list[current_torrent_list_index]?.get_hash_v1()">Info Hash v1: {{
+          torrent_list[current_torrent_list_index]?.get_hash_v1() }}</div>
+
+        <div v-show="torrent_list[current_torrent_list_index]?.get_hash_v2()">Info Hash v2: {{
+          torrent_list[current_torrent_list_index]?.get_hash_v2() }}</div>
+      </div>
 
       <!-- buttons -->
       <div style="display: flex;gap: 1rem;">
-        <button disabled>Copy magnet</button>
-        <button @click="save_torrent(torrent_list[current_torrent_list_index])" v-show="torrent_list.length > 0">Save
+        <button @click="copy_to_clipboard(torrent_list[current_torrent_list_index]?.generate_magnet())">Copy
+          magnet</button>
+
+        <button @click="save_torrent(torrent_list[current_torrent_list_index])">Save
           torrent</button>
-        <button disabled @click="save_torrent(fake_hybrid_as_v1(torrent_list[current_torrent_list_index]))"
-          v-show="torrent_list.length > 0">Fake&Save hybrid → v1</button>
+
+        <button v-if="false"
+          :disabled="torrent_list[current_torrent_list_index]?.get_format() !== Torrent_format.hybrid"
+          @click="torrent_list.push(fake_hybrid_as_v1(torrent_list[current_torrent_list_index]))">Fake
+          hybrid → v1</button>
+
+        <button :disabled="(() => {
+          const data = torrent_list[current_torrent_list_index]?.data
+          if (data)
+            return !('piece layers' in data)
+          return true
+        })()" @click="torrent_list.push(remove_piece_layers(torrent_list[current_torrent_list_index]))">Remove piece
+          layers</button>
       </div>
 
       <!-- 内容 -->
