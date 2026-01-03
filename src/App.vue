@@ -3,13 +3,11 @@ import RecursiveComponent from "@/components/RecursiveComponent.vue"
 
 import { Torrent, Torrent_format } from "@/torrent"
 
-import { ref } from "vue"
 import { storeToRefs } from 'pinia'
-import { Buffer } from 'buffer'
+import { ref } from "vue"
 
 import { useMainStore } from '@/stores/mainStore'
 import { copy_to_clipboard } from '@/utils'
-import { error } from "console"
 
 const is_show_about = ref<boolean>(false)
 const home_link = "https://github.com/op200/torrent-parser"
@@ -100,11 +98,17 @@ function remove_piece_layers(torrent: Torrent | undefined): Torrent {
       <button @click="add_torrents">Add torrent</button>
 
       <button @click="console.info(torrent_list)">Print list</button>
+
       <button @click="torrent_list.length = 0, current_torrent_list_index = 0">Clear list</button>
+
+      <button @click="(() => {
+        torrent_list.splice(current_torrent_list_index, 1)
+        current_torrent_list_index = Math.max(0, current_torrent_list_index - 1)
+      })()" :disabled="!torrent_list.length">Delete current</button>
 
       <button @click="copy_to_clipboard(torrent_list
         .map(torrent => torrent.generate_magnet())
-        .join('\n'))" :disabled="torrent_list.length < 1">Copy all magnet</button>
+        .join('\n'))" :disabled="!torrent_list.length">Copy all magnet</button>
 
       <button @click="is_show_about = !is_show_about">About</button>
     </div>

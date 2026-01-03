@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { PropType } from 'vue';
 import { useMainStore } from '@/stores/mainStore';
+import type { PropType } from 'vue';
+import { computed, ref } from 'vue';
 
 // 定义类型
 type NestedData = Record<string, any> | any[];
@@ -12,42 +12,41 @@ const props = defineProps({
         type: Array as PropType<Array<string | number>>,
         required: true,
     },
-});
+})
 
-const mainStore = useMainStore();
-const { torrent_list } = mainStore;
+const { torrent_list } = useMainStore()
 
 // 折叠状态管理
-const expandedKeys = ref(new Set<string>());
-const MAX_DISPLAY_LENGTH = 200;
+const expandedKeys = ref(new Set<string>())
+const MAX_DISPLAY_LENGTH = 200
 
 // 判断是否是嵌套结构
 const isNested = (val: unknown): val is NestedData => {
-    return val !== null && typeof val === 'object';
-};
+    return val !== null && typeof val === 'object'
+}
 
 // 计算背景色（基于路径深度）
 const backgroundColor = computed(() => {
-    const depth = props.path.length;
-    const opacity = 0.1 + Math.min(depth * 0.1, 0.5);
-    return `rgba(100, 150, 255, ${opacity})`;
+    const depth = props.path.length
+    const opacity = 0.1 + Math.min(depth * 0.1, 0.5)
+    return `rgba(100, 150, 255, ${opacity})`
 });
 
 // 获取当前路径对应的值
 const currentValue = computed({
-    get(): any {
-        return props.path.reduce((obj: any, key) => obj[key], torrent_list);
+    get() {
+        return props.path.reduce((obj: any, key) => obj[key], torrent_list)
     },
-    set(newValue: any) {
+    set(newValue) {
         // 更新store中的数据
-        const path = [...props.path];
-        const lastKey = path.pop();
-        const parent = path.reduce((obj: any, key) => obj[key], torrent_list);
+        const path = [...props.path]
+        const lastKey = path.pop()
+        const parent = path.reduce((obj: any, key) => obj[key], torrent_list)
         if (parent && lastKey !== undefined) {
-            parent[lastKey] = newValue;
+            parent[lastKey] = newValue
         }
     }
-});
+})
 
 // 切换折叠状态
 const toggleExpand = (key: string) => {
@@ -74,10 +73,11 @@ const displayKey = (key: string | number) => {
                     <div class="content-simple">
                         <span class="content-key">{{ displayKey(key) }}:</span>
 
-                        <textarea v-if="new Set(['comment']).has(key)" :value="value" class="content-input"
-                            @input="currentValue[key] = ($event.target as HTMLInputElement).value"></textarea>
+                        <textarea v-if="new Set<string | number>(['comment']).has(key)" :value="value"
+                            class="content-input"
+                            @input="(currentValue as Record<string, any>)[key as string] = ($event.target as HTMLInputElement).value"></textarea>
                         <input v-else type="text" class="content-input" :value="value"
-                            @input="currentValue[key] = ($event.target as HTMLInputElement).value" />
+                            @input="(currentValue as any)[key] = ($event.target as HTMLInputElement).value" />
                     </div>
                 </template>
 
