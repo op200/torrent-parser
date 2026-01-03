@@ -35,6 +35,9 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "./pnpm-lock.yaml"
 
+      - name: pnpm install
+        run: pnpm i --frozen-lockfile
+
       - name: Build Vue 3 project
         run: pnpm build
 
