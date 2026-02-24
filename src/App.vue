@@ -34,7 +34,7 @@ async function add_torrents() {
       return
     }
 
-    for (const file of files)
+    for (const file of Array.from(files))
       torrent_list.value.push(new Torrent(await file.arrayBuffer(), file.name))
 
     current_torrent_list_index.value = torrent_list.value.length - 1

@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 import bencode from 'bencode'
-import CryptoJS from "crypto-js"
+import * as CryptoJS from "crypto-js"
 
 type Primitive = string | number | boolean | null
 type BencodeValue = Primitive | BencodeValue[] | { [key: string]: BencodeValue }
