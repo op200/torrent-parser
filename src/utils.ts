@@ -27,29 +27,29 @@ export async function copy_to_clipboard(text: string | undefined): Promise<boole
 
     try {
         // 使用现代 Clipboard API
-        await navigator.clipboard.writeText(text);
-        return true;
+        await navigator.clipboard.writeText(text)
+        return true
     } catch (err) {
-        console.error('复制失败:', err);
-        return fallback_copy(text); // 降级方案
+        console.error('复制失败:', err)
+        return fallback_copy(text) // 降级方案
     }
 }
 
 // 降级方案（兼容旧浏览器）
 function fallback_copy(text: string): boolean {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed'; // 避免滚动
-    document.body.appendChild(textarea);
-    textarea.select();
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed' // 避免滚动
+    document.body.appendChild(textarea)
+    textarea.select()
 
     try {
-        const success = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        return success;
+        const success = document.execCommand('copy')
+        document.body.removeChild(textarea)
+        return success
     } catch (err) {
-        console.error('降级复制失败:', err);
-        document.body.removeChild(textarea);
-        return false;
+        console.error('降级复制失败:', err)
+        document.body.removeChild(textarea)
+        return false
     }
 }

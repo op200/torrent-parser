@@ -1,5 +1,5 @@
-import { Buffer } from 'buffer'
 import bencode from 'bencode'
+import { Buffer } from 'buffer'
 import * as CryptoJS from "crypto-js"
 
 type Primitive = string | number | boolean | null
@@ -40,7 +40,7 @@ function convert_uint8_arrays<T>(obj: T): Converted<T> {
 
 function buffer_to_word_array(buffer: Buffer): CryptoJS.lib.WordArray {
     // 使用 CryptoJS 的 Latin1 解析器直接处理字节数据
-    return CryptoJS.enc.Latin1.parse(buffer.toString('latin1'));
+    return CryptoJS.enc.Latin1.parse(buffer.toString('latin1'))
 }
 
 export enum Torrent_format {
@@ -72,7 +72,7 @@ export class Torrent {
 
     get_format(): Torrent_format {
         if (this.data.info["meta version"] === 2)
-            if ("files" in this.data.info)
+            if (this.data.info?.files || this.data.info?.length)
                 return Torrent_format.hybrid
             else return Torrent_format.v2
         return Torrent_format.v1

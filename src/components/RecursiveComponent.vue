@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useMainStore } from '@/stores/mainStore';
-import type { PropType } from 'vue';
-import { computed, ref } from 'vue';
+import { computed, ref, type PropType } from 'vue'
+
+import { useMainStore } from '@/stores/mainStore'
 
 // 定义类型
-type NestedData = Record<string, any> | any[];
+type NestedData = Record<string, any> | any[]
 
 // Props 定义
 const props = defineProps({
@@ -30,7 +30,7 @@ const backgroundColor = computed(() => {
     const depth = props.path.length
     const opacity = 0.1 + Math.min(depth * 0.1, 0.5)
     return `rgba(100, 150, 255, ${opacity})`
-});
+})
 
 // 获取当前路径对应的值
 const currentValue = computed({
@@ -51,16 +51,16 @@ const currentValue = computed({
 // 切换折叠状态
 const toggleExpand = (key: string) => {
     if (expandedKeys.value.has(key)) {
-        expandedKeys.value.delete(key);
+        expandedKeys.value.delete(key)
     } else {
-        expandedKeys.value.add(key);
+        expandedKeys.value.add(key)
     }
-};
+}
 
 // 处理数组索引显示
 const displayKey = (key: string | number) => {
-    return typeof key === 'number' ? `[${key}]` : key;
-};
+    return typeof key === 'number' ? `[${key}]` : key
+}
 </script>
 
 <template>

@@ -1,11 +1,7 @@
-import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 
-import App from './App.vue'
-
-// import { Buffer } from 'buffer';
-// window.Buffer = Buffer;
-
+import App from '@/App.vue'
 import '@/asserts/main.css'
 
 const app = createApp(App)

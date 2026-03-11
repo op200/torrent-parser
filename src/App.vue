@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import RecursiveComponent from "@/components/RecursiveComponent.vue"
-
-import { Torrent, Torrent_format } from "@/torrent"
-
 import { storeToRefs } from 'pinia'
 import { ref } from "vue"
 
+import RecursiveComponent from "@/components/RecursiveComponent.vue"
 import { useMainStore } from '@/stores/mainStore'
+import { Torrent, Torrent_format } from "@/torrent"
 import { copy_to_clipboard } from '@/utils'
 
 const is_show_about = ref<boolean>(false)
 const home_link = "https://github.com/op200/torrent-parser"
 
-const mainStore = useMainStore();
+const mainStore = useMainStore()
 const { torrent_list } = storeToRefs(mainStore)
 
 const current_torrent_list_index = ref<number>(0)
@@ -53,15 +51,15 @@ function save_torrent(torrent: Torrent | undefined) {
   const buffer = torrent.encode()
 
   // 保存为torrent文件作为浏览器下载器导出
-  const blob = new Blob([Uint8Array.from(buffer)], { type: 'application/x-bittorrent' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = torrent.filename || "download.torrent";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const blob = new Blob([Uint8Array.from(buffer)], { type: 'application/x-bittorrent' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = torrent.filename || "download.torrent"
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 function fake_hybrid_as_v1(torrent: Torrent | undefined): Torrent {

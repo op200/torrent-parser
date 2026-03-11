@@ -1,9 +1,9 @@
-import { ref, computed, watch } from 'vue'
-import { defineStore } from 'pinia'
 import { Buffer } from 'buffer'
+import { defineStore } from 'pinia'
+import { ref, watch } from 'vue'
 
-import { localStore as local_store } from '@/utils'
 import { Torrent } from "@/torrent"
+import { localStore as local_store } from '@/utils'
 
 type Torrent_data = {
   filename: string
