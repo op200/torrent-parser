@@ -13,12 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      buffer: 'buffer/',
-      path: 'path-browserify',
     },
-  },
-  optimizeDeps: {
-    include: ['buffer'],
   },
   base: process.env.NODE_ENV === 'production' ? '/torrent-parser/' : '/',
 })
